@@ -20,7 +20,7 @@ Sample RAG application that shows how you can use local compute to build and run
 
 **Language**:
 
-- Python
+- Python (>= 3.9.12)
 
 **Tools:**
 
