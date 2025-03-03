@@ -23,4 +23,12 @@ TODO: Add infra setup instructions
       1. Using the specified index definition and embedding model, create an index
       2. Loads the data, generates embeddings/vectors
       3. Uploads the vectorized data into pre-defined search index
-      4.
+   4. Verify index is created
+4. RETRIEVAL
+   1. CONFIGURATION: similar as above to fetch model and search clients
+   2. Receive input query from user
+   3. Map user query to an intent (intent mapping - refer to the prompt used); this provides us the search query
+   4. Create embedding or vectorize the search query
+   5. Search the index for matches on the search query
+   6. For each match, retrieve the document/content
+   7. Return the document(s) to the user
