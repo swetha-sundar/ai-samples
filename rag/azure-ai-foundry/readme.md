@@ -32,3 +32,9 @@ TODO: Add infra setup instructions
    5. Search the index for matches on the search query
    6. For each match, retrieve the document/content
    7. Return the document(s) to the user
+5. AUGMENTATION + GENERATION
+   1. Configure/Fetch the Azure AI Project Client
+   2. Retrieve the Azure Open AI Chat Completions model inference client
+   3. Use incoming user query to retrieve related product documents
+   4. Use this knowledge to populate a "grounded" chat prompt template
+   5. Call the chat completions inference client with the grounded prompt and generate a response for the user query
