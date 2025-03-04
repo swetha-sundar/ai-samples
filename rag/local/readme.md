@@ -37,9 +37,35 @@ Sample RAG application that shows how you can use local compute to build and run
 
 ## Getting Started
 
-1. Install ollama from [ollama.com](https://ollama.com/)
+1. Install ollama from [ollama.com](https://ollama.com/).
+
+   *If you are using VSCode running in WSL 2, you can install ollama by running the following command directly in VSCode terminal:*
+
+   ```bash
+   curl -fsSL https://ollama.com/install.sh | sh
+   ```
+
+   *Optionally, you can verify the installation and add ollama to your path:*
+
+   ```bash
+   ollama --version
+   export PATH=$PATH:$HOME/.ollama/bin
+   ```
+
 2. Run the embedding and language models (mentioned in the above section) using the following command:
-    `ollama pull hf.co/CompendiumLabs/bge-base-en-v1.5-gguf`
-    `ollama pull hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF`
-3. pip install the requirements
-4. Follow step by step instructions in the [notebook](byo-rag.ipynb) or use the python file `python byo-rag.py`; Make sure you are in the rag/local folder while running this command
+
+   ```bash
+   ollama pull hf.co/CompendiumLabs/bge-base-en-v1.5-gguf
+   ollama pull hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF
+   ```
+
+3. Move to rag/local folder and install the dependencies:
+
+   ```bash
+   cd rag/local
+   pip install -r requirements.txt
+   ```
+
+4. Follow step by step instructions in the [notebook](byo-rag.ipynb) or use the python file `python byo-rag.py`; Make sure you are in the rag/local folder while running this command.
+  
+   *Note: if you want to run the notebook locally, make sure to have Jupiter extension installed in VSCode and you select the appropriate python kernel*.
