@@ -6,7 +6,7 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
 
 TODO: Add infra setup instructions
 
-### Detailed Steps
+## Explanations for each step in the RAG
 
 1. Add your data to your storage (local is used in this example); Optionally you can push it to Storage Account and add a simple logic to read data from blob
 2. Exploratory Data Analysis - Inspect and understand your data
@@ -38,3 +38,7 @@ TODO: Add infra setup instructions
    3. Use incoming user query to retrieve related product documents
    4. Use this knowledge to populate a "grounded" chat prompt template
    5. Call the chat completions inference client with the grounded prompt and generate a response for the user query
+6. TEST/TRY IT OUT QUERY SAMPLES for the data
+   1. "I need a new tent for 4 people, what would you recommend?"
+   2. "Which tent is good for bug protection and rainy days?"
+   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries realted to camping gear.."
