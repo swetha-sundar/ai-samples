@@ -1,19 +1,23 @@
 import os
-from pathlib import Path
+import logging
+import pathlib
 from opentelemetry import trace
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
-from config import PROMPT_PATH, get_logger
+from dotenv import load_dotenv
+
+load_dotenv()
+PROMPT_PATH = pathlib.Path(__file__).parent.resolve() / "prompts"
 
 #------------------------------------------------------------
 # I. SEARCH INDEX CLIENT SETUP
 #------------------------------------------------------------
 
 # initialize logging and tracing objects
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 tracer = trace.get_tracer(__name__)
 
 # create a project client using environment variables loaded from the .env file
@@ -55,7 +59,7 @@ def get_product_documents(messages: list, context: dict = None) -> dict:
     top = overrides.get("top", 5)
 
     # generate a search query from the chat messages using intent mapping
-    intent_prompty = PromptTemplate.from_prompty(Path(PROMPT_PATH) / "intent_mapping.prompty")
+    intent_prompty = PromptTemplate.from_prompty(pathlib.Path(PROMPT_PATH) / "intent_mapping.prompty")
 
     intent_mapping_response = chat.complete(
         model=os.environ["INTENT_MAPPING_MODEL"],
