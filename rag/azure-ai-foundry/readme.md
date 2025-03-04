@@ -4,7 +4,7 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
 
 ## Setup
 
-TODO: Add infra setup instructions
+TODO: Add infra setup instructions/scripts
 
 ## Explanations for each step in the RAG
 
@@ -42,3 +42,30 @@ TODO: Add infra setup instructions
    1. "I need a new tent for 4 people, what would you recommend?"
    2. "Which tent is good for bug protection and rainy days?"
    3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries realted to camping gear.."
+
+## Getting Started
+
+1. Create a virtual environment
+    `python3 -m venv .aifoundryenv`
+    `source .aifoundryenv/bin/activate`
+2. Install dependencies - `pip install -r requirements.txt`
+3. Use portal or infra scripts to create Azure AI Hub and Project Resources
+4. .....
+5. Check the "Authentication Type" on the workspaceblobstore and workspaceartifactstore. If it is "Account Key" based authentication, then ensure that the Storage Account has "Account Key Access" Enabled in the Configuration settings
+6. Ensure the user has Blob Data Contributor access on the Storage Account; Follow below steps to set it right
+    4a. Fetch the users `az ad user list`
+    4b. Copy the object id for the respective user
+    4c. Assign the role for the chosen user
+        `az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"`
+
+        <mySubscriptionID>: Subscription ID of the Azure AI Studio hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
+        <myResourceGroupName>: Resource group of the Azure AI Studio hub's linked storage account.
+        <user-id>: User object ID for role assignment (retrieve with "az ad user show" command).
+7. Run az login
+8. Ensure you copy .env.template file to .env
+9. Populate the AI project connection string  (You can fetch this from Project Overview page with AI Foundry Portal)
+10. Ensure the dependencies are installed from step 2.
+11. Configuration: `python 1-config.py`
+12. Search Index Definition and Creation: `python 2-create-search-index.py`
+13. Retrieve Product Documents: `python 3-get-product-documents.py` You will be prompted for a user query; optionally you can pass it in as a command line argument; see code file
+14. Chat with Products (Generate a response for user query instead of list of documents): `python 4-chat-with-products.py`; optionally you can pass it in as a command line argument; see code file
