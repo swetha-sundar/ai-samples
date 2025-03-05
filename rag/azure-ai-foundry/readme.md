@@ -17,50 +17,53 @@ AI_FOUNDRY_SERVICE_NAME=<ai-foundry-service-name>
 ```bash
 az login
 
-# Provision the required resources
+# Provision the resource group
 az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
 
+# Provision the Azure AI Search service
 az search service create --name $SEARCH_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --location $LOCATION --sku Standard
 
-TODO: Add the command to create the Azure AI Foundry resource
+# Provision the Azure AI Hub (Foundry) service
+# TODO: Confirm steps in doc: https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/create-hub-project-sdk?tabs=azurecli are correct and enough
+az ml workspace create --kind hub --name $AI_FOUNDRY_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
 ```
 
 ## Explanations for each step in the RAG
 
 1. Add your data to your storage (local is used in this example); Optionally you can push it to Storage Account and add a simple logic to read data from blob
-2. Exploratory Data Analysis - Inspect and understand your data
-3. Indexing your data using Azure AI Search
+1. Exploratory Data Analysis - Inspect and understand your data
+1. Indexing your data using Azure AI Search
    1. CONFIGURATION:
       1. Configuration your Azure AI Project Client
-      2. Create client for embedding model (i.e., the embedding inference client)
-      3. Retrieve a search connection object from AI Project instance
-      4. Create search client for indexing using the connection object above
-   2. INDEX DEFINITION:
+      1. Create client for embedding model (i.e., the embedding inference client)
+      1. Retrieve a search connection object from AI Project instance
+      1. Create search client for indexing using the connection object above
+   1. INDEX DEFINITION:
       1. Set the right parameters/properties for the index for the data
-      2. Choose the algorithm (cosine distance HNSW algo chosen here) for similarity; Uses semantic ranking
-   3. INDEX CREATION:
+      1. Choose the algorithm (cosine distance HNSW algo chosen here) for similarity; Uses semantic ranking
+   1. INDEX CREATION:
       1. Using the specified index definition and embedding model, create an index
-      2. Loads the data, generates embeddings/vectors
-      3. Uploads the vectorized data into pre-defined search index
-   4. Verify index is created
-4. RETRIEVAL
+      1. Loads the data, generates embeddings/vectors
+      1. Uploads the vectorized data into pre-defined search index
+   1. Verify index is created
+1. RETRIEVAL
    1. CONFIGURATION: similar as above to fetch model and search clients
-   2. Receive input query from user
-   3. Map user query to an intent (intent mapping - refer to the prompt used); this provides us the search query
-   4. Create embedding or vectorize the search query
-   5. Search the index for matches on the search query
-   6. For each match, retrieve the document/content
-   7. Return the document(s) to the user
-5. AUGMENTATION + GENERATION
+   1. Receive input query from user
+   1. Map user query to an intent (intent mapping - refer to the prompt used); this provides us the search query
+   1. Create embedding or vectorize the search query
+   1. Search the index for matches on the search query
+   1. For each match, retrieve the document/content
+   1. Return the document(s) to the user
+1. AUGMENTATION + GENERATION
    1. Configure/Fetch the Azure AI Project Client
-   2. Retrieve the Azure Open AI Chat Completions model inference client
-   3. Use incoming user query to retrieve related product documents
-   4. Use this knowledge to populate a "grounded" chat prompt template
-   5. Call the chat completions inference client with the grounded prompt and generate a response for the user query
-6. TEST/TRY IT OUT QUERY SAMPLES for the data
+   1. Retrieve the Azure Open AI Chat Completions model inference client
+   1. Use incoming user query to retrieve related product documents
+   1. Use this knowledge to populate a "grounded" chat prompt template
+   1. Call the chat completions inference client with the grounded prompt and generate a response for the user query
+1. TEST/TRY IT OUT QUERY SAMPLES for the data
    1. "I need a new tent for 4 people, what would you recommend?"
-   2. "Which tent is good for bug protection and rainy days?"
-   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
+   1. "Which tent is good for bug protection and rainy days?"
+   1. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
 
 ## Getting Started
 
@@ -74,10 +77,6 @@ TODO: Add the command to create the Azure AI Foundry resource
    ![image](assets/deployModels.png)
 
 1. In Azure portal, create a new `Azure AI Search` resource, in the same resource group as the AI Foundry resource.
-1. In the AI Foundry portal, link the Azure AI Search resource to the AI Project, by clicking on the `New Connection` button in the `Connections` tab of the AI Project. Select the `Azure AI Search` connection type and you should automatically see your resource. If not, you can manually provide the required information.
-
-   ![image](assets/newConnection.png)
-
 1. In VSCode, go to *rag/azure-ai-foundry* and ensure you copy `.env.template` to a new `.env` file.
 1. Populate the `AIPROJECT_CONNECTION_STRING` - You can fetch this from Project Overview page in AI Foundry Portal: *Get API endpoints and keys*.
 1. Create a virtual environment by running the following commands in VSCode terminal:
@@ -137,6 +136,10 @@ TODO: Add the command to create the Azure AI Foundry resource
       `myStorageAccountName`: Storage account name of the Azure AI Studio Hub's linked storage account.
 
       `mySearchServiceName`: Azure AI Search service name of the Azure AI Studio Hub's linked search service.
+
+1. In the AI Foundry portal, link the Azure AI Search resource to the AI Project, by clicking on the `New Connection` button in the `Connections` tab of the AI Project. Select the `Azure AI Search` connection type and you should automatically see your resource. If not, you can manually provide the required information.
+
+   ![image](assets/newConnection.png)
 
 1. Search Index Definition and Creation:
 
