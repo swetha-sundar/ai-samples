@@ -2,32 +2,6 @@
 
 Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure OpenAI
 
-## Setup
-
-In your terminal, set up the following variables and run the Azure CLI commands to create the required resources. You can also use the Azure portal to create these resources.
-
-```bash
-# Set the following variables
-LOCATION=<location>
-RESOURCE_GROUP_NAME=<resource-group-name>
-SEARCH_SERVICE_NAME=<search-service-name>
-AI_FOUNDRY_SERVICE_NAME=<ai-foundry-service-name>
-```
-
-```bash
-az login
-
-# Provision the resource group
-az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
-
-# Provision the Azure AI Search service
-az search service create --name $SEARCH_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --location $LOCATION --sku Standard
-
-# Provision the Azure AI Hub (Foundry) service
-# TODO: Confirm steps in doc: https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/create-hub-project-sdk?tabs=azurecli are correct and enough
-az ml workspace create --kind hub --name $AI_FOUNDRY_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
-```
-
 ## Explanations for each step in the RAG
 
 1. Add your data to your storage (local is used in this example); Optionally you can push it to Storage Account and add a simple logic to read data from blob
