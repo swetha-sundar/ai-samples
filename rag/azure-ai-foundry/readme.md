@@ -45,27 +45,101 @@ TODO: Add infra setup instructions/scripts
 
 ## Getting Started
 
-1. Create a virtual environment
-    `python3 -m venv .aifoundryenv`
-    `source .aifoundryenv/bin/activate`
-2. Install dependencies - `pip install -r requirements.txt`
-3. Use portal or infra scripts to create Azure AI Hub and Project Resources
-4. .....
-5. Check the "Authentication Type" on the workspaceblobstore and workspaceartifactstore. If it is "Account Key" based authentication, then ensure that the Storage Account has "Account Key Access" Enabled in the Configuration settings
-6. Ensure the user has Blob Data Contributor access on the Storage Account; Follow below steps to set it right
-    4a. Fetch the users `az ad user list`
-    4b. Copy the object id for the respective user
-    4c. Assign the role for the chosen user
-        `az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"`
+1. Use portal or infra scripts to create an `Azure AI Foundry` resource, which will generate an AI Hub.
+1. After creating the resource, from the Overview page you can launch the *Azure AI Foundry portal*.
+1. In the AI Foundry portal, create a new `AI Project`.
+1. Deploy these 2 models, used for embedding and chat completions (and customizable in `.env` file):
+   * `text-embedding-ada-002`
+   * `gpt-4o-mini`
 
-        <mySubscriptionID>: Subscription ID of the Azure AI Studio hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
-        <myResourceGroupName>: Resource group of the Azure AI Studio hub's linked storage account.
-        <user-id>: User object ID for role assignment (retrieve with "az ad user show" command).
-7. Run az login
-8. Ensure you copy .env.template file to .env
-9. Populate the AI project connection string  (You can fetch this from Project Overview page with AI Foundry Portal)
-10. Ensure the dependencies are installed from step 2.
-11. Configuration: `python 1-config.py`
-12. Search Index Definition and Creation: `python 2-create-search-index.py`
-13. Retrieve Product Documents: `python 3-get-product-documents.py` You will be prompted for a user query; optionally you can pass it in as a command line argument; see code file
-14. Chat with Products (Generate a response for user query instead of list of documents): `python 4-chat-with-products.py`; optionally you can pass it in as a command line argument; see code file
+![image](assets/deployModels.png)
+
+1. In Azure portal, create a new `Azure AI Search` resource, in the same resource group as the AI Foundry resource.
+1. In the AI Foundry portal, link the Azure AI Search resource to the AI Project, by clicking on the `New Connection` button in the `Connections` tab of the AI Project. Select the `Azure AI Search` connection type and you should automatically see your resource. If not, you can manually provide the required information.
+
+![image](assets/newConnection.png)
+
+1. In VSCode, go to *rag/azure-ai-foundry* and ensure you copy `.env.template` to a new `.env` file.
+1. Populate the `AIPROJECT_CONNECTION_STRING` - You can fetch this from Project Overview page in AI Foundry Portal: *Get API endpoints and keys*.
+1. Create a virtual environment by running the following commands in VSCode terminal:
+
+   ```bash
+   python3 -m venv .aifoundryenv
+   source .aifoundryenv/bin/activate
+   ```
+
+1. Install dependencies:
+
+   ```bash
+   cd rag/azure-ai-foundry/
+   pip install -r requirements.txt
+   ```
+
+1. Login to your Azure subscription:
+
+   ```bash
+   az login
+   ```
+
+1. Run the configuration file, which will generate new resources in your Azure AI Foundry project, including a `workspaceblobstore` and a `workspaceartifactstore`:
+
+   ```bash
+   python config.py
+   ```
+
+1. Check the "Authentication Type" on the `workspaceblobstore` and `workspaceartifactstore` by selecting each of them in the Overview page of your AI Project. By default, it should be *Credential based*. If it's *Account Key based* authentication, then ensure that the Storage Account has *Account Key Access* Enabled in the Configuration settings.
+
+1. Ensure the user has *Blob Data Contributor* access on the Storage Account, and *Search Index Data Contributor* access on the Azure AI Search resource. Follow below steps to set it right:
+
+   4a. Fetch the id of your user
+
+   ```bash
+   az ad signed-in-user show
+   ```
+
+   *Note: if you need the id of a different user, you can use the following command, replacing the email address with the proper one: `az ad user list --filter "mail eq 'your-email@microsoft.com'" --output json`*
+
+   4b. Copy the object id for the respective user
+
+   4c. Assign the roles to the user, replacing the placeholder items as explained below.
+
+   ```bash
+   az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Storage/storageAccounts/<myStorageAccountName> --assignee-principal-type User --assignee-object-id "<user-id>"
+
+   az role assignment create --role "Search Index Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Search/searchServices/<mySearchServiceName> --assignee-principal-type User --assignee-object-id "<user-id>"
+   ```
+
+   `mySubscriptionID`: Subscription ID of the Azure AI Studio Hub's linked storage account (available in Azure AI Hub resource view in Azure Portal).
+
+   `myResourceGroupName`: Resource group of the Azure AI Studio Hub's linked storage account.
+
+   `user-id`: User object ID for role assignment, retrieved on step 4a.
+
+   `myStorageAccountName`: Storage account name of the Azure AI Studio Hub's linked storage account.
+
+   `mySearchServiceName`: Azure AI Search service name of the Azure AI Studio Hub's linked search service.
+
+1. Search Index Definition and Creation:
+
+   ```bash
+   python 2-create-search-index.py
+   ```
+
+   Once the command completes, you should see the index created in the Azure AI Search resource.
+
+   ![image](assets/index.png)
+   ![image](assets/indexSearch.png)
+
+1. TODO: TEST FROM HERE AND UPDATE DOCS
+
+1. Retrieve Product Documents:
+
+   ```bash
+   python 3-get-product-documents.py
+   ```
+
+   You will be prompted for a user query; optionally you can pass it in as a command line argument; see code file
+1. Chat with Products (Generate a response for user query instead of list of documents): `python 4-chat-with-products.py`; optionally you can pass it in as a command line argument; see code file
+
+
+
