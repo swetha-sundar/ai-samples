@@ -57,7 +57,7 @@ TODO: Add infra setup instructions for
 
 2. Use portal or infra scripts to create Azure AI Hub and Project Resources
 3. Deploy the following models
-   1. Embedding Model: `ada-embedding-ada-v2`
+   1. Embedding Model: `text-embedding-ada-v2`
    2. Chat Completions Model: `gpt-4o-mini`
 
    ![aifoundry_models.png](../assets/aifoundry_models.png)
