@@ -1,5 +1,0 @@
-*.env
-**/.aifoundryenv/bin/activate/**
-**/.aifoundryenv/Lib/**
-**/.aifoundryenv/Scripts/**
-**/source/**
