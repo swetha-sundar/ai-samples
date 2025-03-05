@@ -4,7 +4,26 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
 
 ## Setup
 
-TODO: Add infra setup instructions/scripts
+In your terminal, set up the following variables and run the Azure CLI commands to create the required resources. You can also use the Azure portal to create these resources.
+
+```bash
+# Set the following variables
+LOCATION=<location>
+RESOURCE_GROUP_NAME=<resource-group-name>
+SEARCH_SERVICE_NAME=<search-service-name>
+AI_FOUNDRY_SERVICE_NAME=<ai-foundry-service-name>
+```
+
+```bash
+az login
+
+# Provision the required resources
+az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
+
+az search service create --name $SEARCH_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --location $LOCATION --sku Standard
+
+TODO: Add the command to create the Azure AI Foundry resource
+```
 
 ## Explanations for each step in the RAG
 
@@ -41,7 +60,7 @@ TODO: Add infra setup instructions/scripts
 6. TEST/TRY IT OUT QUERY SAMPLES for the data
    1. "I need a new tent for 4 people, what would you recommend?"
    2. "Which tent is good for bug protection and rainy days?"
-   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries realted to camping gear.."
+   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
 
 ## Getting Started
 
@@ -52,12 +71,12 @@ TODO: Add infra setup instructions/scripts
    * `text-embedding-ada-002`
    * `gpt-4o-mini`
 
-![image](assets/deployModels.png)
+   ![image](assets/deployModels.png)
 
 1. In Azure portal, create a new `Azure AI Search` resource, in the same resource group as the AI Foundry resource.
 1. In the AI Foundry portal, link the Azure AI Search resource to the AI Project, by clicking on the `New Connection` button in the `Connections` tab of the AI Project. Select the `Azure AI Search` connection type and you should automatically see your resource. If not, you can manually provide the required information.
 
-![image](assets/newConnection.png)
+   ![image](assets/newConnection.png)
 
 1. In VSCode, go to *rag/azure-ai-foundry* and ensure you copy `.env.template` to a new `.env` file.
 1. Populate the `AIPROJECT_CONNECTION_STRING` - You can fetch this from Project Overview page in AI Foundry Portal: *Get API endpoints and keys*.
@@ -91,38 +110,38 @@ TODO: Add infra setup instructions/scripts
 
 1. Ensure the user has *Blob Data Contributor* access on the Storage Account, and *Search Index Data Contributor* access on the Azure AI Search resource. Follow below steps to set it right:
 
-   4a. Fetch the id of your user
+   1. Fetch the id of your user
 
-   ```bash
-   az ad signed-in-user show
-   ```
+      ```bash
+      az ad signed-in-user show
+      ```
 
-   *Note: if you need the id of a different user, you can use the following command, replacing the email address with the proper one: `az ad user list --filter "mail eq 'your-email@microsoft.com'" --output json`*
+      Note: if you need the id of a different user, you can use the following command, replacing the email address with the proper one: `az ad user list --filter "mail eq 'your-email@microsoft.com'" --output json`*
 
-   4b. Copy the object id for the respective user
+   1. Copy the object id for the respective user
 
-   4c. Assign the roles to the user, replacing the placeholder items as explained below.
+   1. Assign the roles to the user, replacing the placeholder items as explained below.
 
-   ```bash
-   az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Storage/storageAccounts/<myStorageAccountName> --assignee-principal-type User --assignee-object-id "<user-id>"
+      ```bash
+      az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Storage/storageAccounts/<myStorageAccountName> --assignee-principal-type User --assignee-object-id "<user-id>"
 
-   az role assignment create --role "Search Index Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Search/searchServices/<mySearchServiceName> --assignee-principal-type User --assignee-object-id "<user-id>"
-   ```
+      az role assignment create --role "Search Index Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Search/searchServices/<mySearchServiceName> --assignee-principal-type User --assignee-object-id "<user-id>"
+      ```
 
-   `mySubscriptionID`: Subscription ID of the Azure AI Studio Hub's linked storage account (available in Azure AI Hub resource view in Azure Portal).
+      `mySubscriptionID`: Subscription ID of the Azure AI Studio Hub's linked storage account (available in Azure AI Hub resource view in Azure Portal).
 
-   `myResourceGroupName`: Resource group of the Azure AI Studio Hub's linked storage account.
+      `myResourceGroupName`: Resource group of the Azure AI Studio Hub's linked storage account.
 
-   `user-id`: User object ID for role assignment, retrieved on step 4a.
+      `user-id`: User object ID for role assignment, retrieved on step 4a.
 
-   `myStorageAccountName`: Storage account name of the Azure AI Studio Hub's linked storage account.
+      `myStorageAccountName`: Storage account name of the Azure AI Studio Hub's linked storage account.
 
-   `mySearchServiceName`: Azure AI Search service name of the Azure AI Studio Hub's linked search service.
+      `mySearchServiceName`: Azure AI Search service name of the Azure AI Studio Hub's linked search service.
 
 1. Search Index Definition and Creation:
 
    ```bash
-   python 2-create-search-index.py
+   python create_search_index.py
    ```
 
    Once the command completes, you should see the index created in the Azure AI Search resource.
@@ -130,16 +149,19 @@ TODO: Add infra setup instructions/scripts
    ![image](assets/index.png)
    ![image](assets/indexSearch.png)
 
-1. TODO: TEST FROM HERE AND UPDATE DOCS
-
 1. Retrieve Product Documents:
 
    ```bash
-   python 3-get-product-documents.py
+   python get_product_documents.py
    ```
 
    You will be prompted for a user query; optionally you can pass it in as a command line argument; see code file
-1. Chat with Products (Generate a response for user query instead of list of documents): `python 4-chat-with-products.py`; optionally you can pass it in as a command line argument; see code file
 
+1. Chat with Products (Generate a response for user query instead of list of documents):
 
+   ```bash
+   python chat_with_products.py
 
+   # optionally you can pass query as a command line argument
+   python chat_with_products.py --query "What is the best tent for families?"
+   ```
