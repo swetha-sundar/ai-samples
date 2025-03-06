@@ -20,7 +20,7 @@ Sample RAG application that shows how you can use local compute to build and run
 
 **Language**:
 
-- Python
+- Python (>= 3.9.12)
 
 **Tools:**
 
@@ -37,9 +37,14 @@ Sample RAG application that shows how you can use local compute to build and run
 
 ## Getting Started
 
-1. Install ollama from [ollama.com](https://ollama.com/)
-2. Run the embedding and language models (mentioned in the above section) using the following command:
-    `ollama pull hf.co/CompendiumLabs/bge-base-en-v1.5-gguf`
-    `ollama pull hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF`
-3. pip install the requirements
-4. Follow step by step instructions in the [notebook](byo-rag.ipynb) or use the python file `python byo-rag.py`; Make sure you are in the rag/local folder while running this command
+1. Install ollama from [ollama.com](https://ollama.com/) (ensure ollama is added to your PATH)
+2. Run the embedding and language models (mentioned in the above section) using the following commands:
+
+   ```sh
+   ollama pull hf.co/CompendiumLabs/bge-base-en-v1.5-gguf
+   ollama pull hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF
+   ```
+
+3. Navigate to the local directory `cd rag/local`
+4. Install the dependencies `pip install -r requirements.txt`
+5. Follow step by step instructions in the [notebook](byo-rag.ipynb) or use the python file `python byo-rag.py`
