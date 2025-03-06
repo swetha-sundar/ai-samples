@@ -44,11 +44,13 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
 1. Use portal or infra scripts to create an `Azure AI Foundry` resource, which will generate an AI Hub.
 1. After creating the resource, from the Overview page you can launch the *Azure AI Foundry portal*.
 1. In the AI Foundry portal, create a new `AI Project`.
-1. Deploy these 2 models, used for embedding and chat completions (and customizable in `.env` file):
+1. Deploy these 2 models, used for embedding and chat completions (and customizable in `.env` file). Ensure the models you deploy are available in your region (check [official documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#model-summary-table-and-region-availability))
    * `text-embedding-ada-002`
    * `gpt-4o-mini`
 
    ![image](assets/deployModels.png)
+
+   *Note: if you change one of the models, remember to adjust the model names used in your .env file*.
 
 1. In Azure portal, create a new `Azure AI Search` resource, in the same resource group as the AI Foundry resource.
 1. In VSCode, go to *rag/azure-ai-foundry* and ensure you copy `.env.template` to a new `.env` file.
@@ -132,7 +134,7 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
    python get_product_documents.py
    ```
 
-   You will be prompted for a user query; optionally you can pass it in as a command line argument; see code file
+   Optionally you can pass a query in as a command line argument.
 
 1. Chat with Products (Generate a response for user query instead of list of documents):
 
