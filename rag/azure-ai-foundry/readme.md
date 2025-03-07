@@ -2,70 +2,163 @@
 
 Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure OpenAI
 
-## Setup
-
-TODO: Add infra setup instructions/scripts
-
 ## Explanations for each step in the RAG
 
 1. Add your data to your storage (local is used in this example); Optionally you can push it to Storage Account and add a simple logic to read data from blob
-2. Exploratory Data Analysis - Inspect and understand your data
-3. Indexing your data using Azure AI Search
+1. Exploratory Data Analysis - Inspect and understand your data
+1. Indexing your data using Azure AI Search
    1. CONFIGURATION:
       1. Configuration your Azure AI Project Client
-      2. Create client for embedding model (i.e., the embedding inference client)
-      3. Retrieve a search connection object from AI Project instance
-      4. Create search client for indexing using the connection object above
-   2. INDEX DEFINITION:
+      1. Create client for embedding model (i.e., the embedding inference client)
+      1. Retrieve a search connection object from AI Project instance
+      1. Create search client for indexing using the connection object above
+   1. INDEX DEFINITION:
       1. Set the right parameters/properties for the index for the data
-      2. Choose the algorithm (cosine distance HNSW algo chosen here) for similarity; Uses semantic ranking
-   3. INDEX CREATION:
+      1. Choose the algorithm (cosine distance HNSW algo chosen here) for similarity; Uses semantic ranking
+   1. INDEX CREATION:
       1. Using the specified index definition and embedding model, create an index
-      2. Loads the data, generates embeddings/vectors
-      3. Uploads the vectorized data into pre-defined search index
-   4. Verify index is created
-4. RETRIEVAL
+      1. Loads the data, generates embeddings/vectors
+      1. Uploads the vectorized data into pre-defined search index
+   1. Verify index is created
+1. RETRIEVAL
    1. CONFIGURATION: similar as above to fetch model and search clients
-   2. Receive input query from user
-   3. Map user query to an intent (intent mapping - refer to the prompt used); this provides us the search query
-   4. Create embedding or vectorize the search query
-   5. Search the index for matches on the search query
-   6. For each match, retrieve the document/content
-   7. Return the document(s) to the user
-5. AUGMENTATION + GENERATION
+   1. Receive input query from user
+   1. Map user query to an intent (intent mapping - refer to the prompt used); this provides us the search query
+   1. Create embedding or vectorize the search query
+   1. Search the index for matches on the search query
+   1. For each match, retrieve the document/content
+   1. Return the document(s) to the user
+1. AUGMENTATION + GENERATION
    1. Configure/Fetch the Azure AI Project Client
-   2. Retrieve the Azure Open AI Chat Completions model inference client
-   3. Use incoming user query to retrieve related product documents
-   4. Use this knowledge to populate a "grounded" chat prompt template
-   5. Call the chat completions inference client with the grounded prompt and generate a response for the user query
-6. TEST/TRY IT OUT QUERY SAMPLES for the data
+   1. Retrieve the Azure Open AI Chat Completions model inference client
+   1. Use incoming user query to retrieve related product documents
+   1. Use this knowledge to populate a "grounded" chat prompt template
+   1. Call the chat completions inference client with the grounded prompt and generate a response for the user query
+1. TEST/TRY IT OUT QUERY SAMPLES for the data
    1. "I need a new tent for 4 people, what would you recommend?"
-   2. "Which tent is good for bug protection and rainy days?"
-   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries realted to camping gear.."
+   1. "Which tent is good for bug protection and rainy days?"
+   1. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
 
 ## Getting Started
 
-1. Create a virtual environment
-    `python3 -m venv .aifoundryenv`
-    `source .aifoundryenv/bin/activate`
-2. Install dependencies - `pip install -r requirements.txt`
-3. Use portal or infra scripts to create Azure AI Hub and Project Resources
-4. .....
-5. Check the "Authentication Type" on the workspaceblobstore and workspaceartifactstore. If it is "Account Key" based authentication, then ensure that the Storage Account has "Account Key Access" Enabled in the Configuration settings
-6. Ensure the user has Blob Data Contributor access on the Storage Account; Follow below steps to set it right
-    4a. Fetch the users `az ad user list`
-    4b. Copy the object id for the respective user
-    4c. Assign the role for the chosen user
-        `az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"`
+1. Use portal or infra scripts to create an `Azure AI Foundry` resource, which will generate an AI Hub.
+1. After creating the resource, from the Overview page you can launch the *Azure AI Foundry portal*.
+1. In the AI Foundry portal, create a new `AI Project`.
+1. Deploy these 2 models, used for embedding and chat completions (and customizable in `.env` file). Ensure the models you deploy are available in your region (check [official documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#model-summary-table-and-region-availability))
+   * `text-embedding-ada-002`
+   * `gpt-4o-mini`
 
-        <mySubscriptionID>: Subscription ID of the Azure AI Studio hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
-        <myResourceGroupName>: Resource group of the Azure AI Studio hub's linked storage account.
-        <user-id>: User object ID for role assignment (retrieve with "az ad user show" command).
-7. Run az login
-8. Ensure you copy .env.template file to .env
-9. Populate the AI project connection string  (You can fetch this from Project Overview page with AI Foundry Portal)
-10. Ensure the dependencies are installed from step 2.
-11. Configuration: `python 1-config.py`
-12. Search Index Definition and Creation: `python 2-create-search-index.py`
-13. Retrieve Product Documents: `python 3-get-product-documents.py` You will be prompted for a user query; optionally you can pass it in as a command line argument; see code file
-14. Chat with Products (Generate a response for user query instead of list of documents): `python 4-chat-with-products.py`; optionally you can pass it in as a command line argument; see code file
+   ![image](assets/deployModels.png)
+
+   *Note: if you change one of the models, remember to adjust the model names used in your .env file*.
+
+1. In Azure portal, create a new `Azure AI Search` resource, in the same resource group as the AI Foundry resource.
+1. In VSCode, go to *rag/azure-ai-foundry* and ensure you copy `.env.template` to a new `.env` file.
+1. Populate the `AIPROJECT_CONNECTION_STRING` - You can fetch this from Project Overview page in AI Foundry Portal.
+1. Create a virtual environment by running the following commands in VSCode terminal:
+
+   ```bash
+   python3 -m venv .aifoundryenv
+   source .aifoundryenv/bin/activate
+   ```
+
+1. Install dependencies:
+
+   ```bash
+   cd rag/azure-ai-foundry/
+   pip install -r requirements.txt
+   ```
+
+1. Login to your Azure subscription:
+
+   ```bash
+   az login
+   ```
+
+1. Run the configuration file, which will generate new resources in your Azure AI Foundry project, including a `workspaceblobstore` and a `workspaceartifactstore`:
+
+   ```bash
+   python config.py
+   ```
+
+1. Check the "Authentication Type" on the `workspaceblobstore` and `workspaceartifactstore` by selecting each of them in the Overview page of your AI Project. By default, it should be *Credential based*. If it's *Account Key based* authentication, then ensure that the Storage Account has *Account Key Access* Enabled in the Configuration settings.
+
+1. Ensure the user has *Blob Data Contributor* access on the Storage Account, and *Search Index Data Contributor* access on the Azure AI Search resource. Follow below steps to set it right:
+
+   1. Fetch the id of your user
+
+      ```bash
+      az ad signed-in-user show
+      ```
+
+      Note: if you need the id of a different user, you can use the following command, replacing the email address with the proper one: `az ad user list --filter "mail eq 'your-email@microsoft.com'" --output json`*
+
+   1. Copy the object id for the respective user
+
+   1. Assign the roles to the user, replacing the placeholder items as explained below.
+
+      ```bash
+      az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Storage/storageAccounts/<myStorageAccountName> --assignee-principal-type User --assignee-object-id "<user-id>"
+
+      az role assignment create --role "Search Index Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName>/providers/Microsoft.Search/searchServices/<mySearchServiceName> --assignee-principal-type User --assignee-object-id "<user-id>"
+      ```
+
+      `mySubscriptionID`: Subscription ID of the Azure AI Studio Hub's linked storage account (available in Azure AI Hub resource view in Azure Portal).
+
+      `myResourceGroupName`: Resource group of the Azure AI Studio Hub's linked storage account.
+
+      `user-id`: User object ID for role assignment, retrieved on step 4a.
+
+      `myStorageAccountName`: Storage account name of the Azure AI Studio Hub's linked storage account.
+
+      `mySearchServiceName`: Azure AI Search service name of the Azure AI Studio Hub's linked search service.
+
+1. In the AI Foundry portal, link the Azure AI Search resource to the AI Project, by clicking on the `New Connection` button in the `Connections` tab of the AI Project. Select the `Azure AI Search` connection type and you should automatically see your resource. If not, you can manually provide the required information.
+
+   ![image](assets/newConnection.png)
+
+1. Search Index Definition and Creation:
+
+   ```bash
+   python create_search_index.py
+   ```
+
+   Once the command completes, you should see the index created in the Azure AI Search resource.
+
+   ![image](assets/index.png)
+   ![image](assets/indexSearch.png)
+
+1. Retrieve Product Documents:
+
+   ```bash
+   python get_product_documents.py
+   ```
+
+   Optionally you can pass a query in as a command line argument.
+
+1. Chat with Products (Generate a response for user query instead of list of documents):
+
+   ```bash
+   python chat_with_products.py
+
+   # optionally you can pass query as a command line argument
+   python chat_with_products.py --query "What is the best tent for families?"
+   ```
+
+## Troubleshooting guide
+
+* Error message when you try to achieve the model you deployed in AI Foundry portal:
+
+   ```text
+   azure.core.excetions.HttpResponseError: (None): The server had an error while processing your request. Sorry about that!
+   ```
+
+   *This might appear when you run `python get_product_documents.py` and/or `python chat_with_products.py`*
+
+   **Troubleshooting steps**
+
+   1. Ensure that the model names in your `.env` file match the model names in the Azure AI Foundry portal.
+
+   1. Ensure that the model is available in your region. You can check the availability of the model in your region by visiting the [official documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#model-summary-table-and-region-availability).
+
+   1. Try to deploy a different model that is available in your region, and update the model names in your `.env` file accordingly.

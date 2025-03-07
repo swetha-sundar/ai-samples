@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from opentelemetry import trace
+from azure.ai.inference.prompts import PromptTemplate
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from config import PROMPT_PATH, get_logger, enable_telemetry
@@ -18,9 +19,6 @@ project = AIProjectClient.from_connection_string(
 
 # create a chat client we can use for testing
 chat = project.inference.get_chat_completions_client()
-
-from azure.ai.inference.prompts import PromptTemplate
-
 
 @tracer.start_as_current_span(name="chat_with_products")
 def chat_with_products(messages: list, context: dict = None) -> dict:
