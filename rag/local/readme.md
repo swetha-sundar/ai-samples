@@ -20,7 +20,7 @@ Sample RAG application that shows how you can use local compute to build and run
 
 **Language**:
 
-- Python
+- Python (>= 3.9.12)
 
 **Tools:**
 
@@ -38,6 +38,8 @@ Sample RAG application that shows how you can use local compute to build and run
 ## Getting Started
 
 1. Install ollama from [ollama.com](https://ollama.com/).
+
+   *If you are using Windows, ensure you add ollama to your PATH.*
 
    *If you are using VSCode running in WSL 2, you can install ollama by running the following command directly in VSCode terminal:*
 
@@ -59,7 +61,7 @@ Sample RAG application that shows how you can use local compute to build and run
    ollama pull hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF
    ```
 
-3. Move to rag/local folder and install the dependencies:
+3. Navigate to rag/local folder and install the dependencies:
 
    ```bash
    cd rag/local
