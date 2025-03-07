@@ -54,7 +54,7 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
 
 1. In Azure portal, create a new `Azure AI Search` resource, in the same resource group as the AI Foundry resource.
 1. In VSCode, go to *rag/azure-ai-foundry* and ensure you copy `.env.template` to a new `.env` file.
-1. Populate the `AIPROJECT_CONNECTION_STRING` - You can fetch this from Project Overview page in AI Foundry Portal: *Get API endpoints and keys*.
+1. Populate the `AIPROJECT_CONNECTION_STRING` - You can fetch this from Project Overview page in AI Foundry Portal.
 1. Create a virtual environment by running the following commands in VSCode terminal:
 
    ```bash
@@ -144,3 +144,21 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
    # optionally you can pass query as a command line argument
    python chat_with_products.py --query "What is the best tent for families?"
    ```
+
+## Troubleshooting guide
+
+* Error message when you try to achieve the model you deployed in AI Foundry portal:
+
+   ```text
+   azure.core.excetions.HttpResponseError: (None): The server had an error while processing your request. Sorry about that!
+   ```
+
+   *This might appear when you run `python get_product_documents.py` and/or `python chat_with_products.py`*
+
+   **Troubleshooting steps**
+
+   1. Ensure that the model names in your `.env` file match the model names in the Azure AI Foundry portal.
+
+   1. Ensure that the model is available in your region. You can check the availability of the model in your region by visiting the [official documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#model-summary-table-and-region-availability).
+
+   1. Try to deploy a different model that is available in your region, and update the model names in your `.env` file accordingly.
