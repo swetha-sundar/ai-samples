@@ -36,8 +36,8 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
    1. Call the chat completions inference client with the grounded prompt and generate a response for the user query
 1. TEST/TRY IT OUT QUERY SAMPLES for the data
    1. "I need a new tent for 4 people, what would you recommend?"
-   1. "Which tent is good for bug protection and rainy days?"
-   1. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
+   2. "Which tent is good for bug protection and rainy days?"
+   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
 
 ## Getting Started
 

@@ -7,7 +7,6 @@ from azure.identity import DefaultAzureCredential
 from config import PROMPT_PATH, get_logger, enable_telemetry
 from get_product_documents import get_product_documents
 
-
 # initialize logging and tracing objects
 logger = get_logger(__name__)
 tracer = trace.get_tracer(__name__)
