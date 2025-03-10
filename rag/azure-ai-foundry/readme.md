@@ -41,7 +41,7 @@ TODO: Add infra setup instructions/scripts
 6. TEST/TRY IT OUT QUERY SAMPLES for the data
    1. "I need a new tent for 4 people, what would you recommend?"
    2. "Which tent is good for bug protection and rainy days?"
-   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries realted to camping gear.."
+   3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
 
 ## Getting Started
 
