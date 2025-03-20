@@ -38,6 +38,7 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
    1. "I need a new tent for 4 people, what would you recommend?"
    2. "Which tent is good for bug protection and rainy days?"
    3. "What food do cats like?" --> The response should be like "Sorry, I can only answer queries related to camping gear.."
+7. EVALUATION!
 
 ## Getting Started
 
