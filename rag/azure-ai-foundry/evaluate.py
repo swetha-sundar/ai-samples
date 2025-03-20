@@ -6,6 +6,11 @@ from azure.ai.evaluation import evaluate, GroundednessEvaluator
 from azure.identity import DefaultAzureCredential
 
 from chat_with_products import chat_with_products
+from config import DATA_PATH
+from pprint import pprint
+from pathlib import Path
+import multiprocessing
+import contextlib
 
 # load environment variables from the .env file at the root of this repo
 from dotenv import load_dotenv
@@ -34,17 +39,9 @@ def evaluate_chat_with_products(query):
 
 # Evaluate must be called inside of __main__, not on import
 if __name__ == "__main__":
-    from config import DATA_PATH
-
     # workaround for multiprocessing issue on linux
-    from pprint import pprint
-    from pathlib import Path
-    import multiprocessing
-    import contextlib
-
     with contextlib.suppress(RuntimeError):
         multiprocessing.set_start_method("spawn", force=True)
-
     # run evaluation with a dataset and target function, log to the project
     result = evaluate(
         data=Path(DATA_PATH) / "chat_eval_data.jsonl",
