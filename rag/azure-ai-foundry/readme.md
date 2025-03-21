@@ -144,6 +144,30 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
    python chat_with_products.py --query "What is the best tent for families?"
    ```
 
+## Evaluation
+
+The following command will run the evaluation script, using the ground truth defined in data/chat_eval_data.jsonl.
+
+>Note: make sure the Storage Account is properly set: `Access Keys` is enabled, and `Public Network Access` is enabled at least for your IP address, and you have `Storage Blob Data Contributor` access. If you get a 403 error, look at the *Troubleshooting guide* below.
+
+   ```bash
+   python evaluate.py
+   ```
+
+   This will run the evaluator and produce a json file named `eval_results.json` in the current directory.
+   Moreover, you will be able to see the evaluation results in the AI Foundry portal under the `Evaluation` tab of your AI Project.
+
+   ![image](assets/evaluation_runs.png)
+
+   You can now go into the details of the evaluation run and see the results of each test case.
+
+   ![image](assets/evaluation_details.png)
+   ![image](assets/evaluation_detailed_metrics.png)
+
+   It's interesting to look into the `context`, to unerstand what information were actually retrieved and how they were used to produce the response.
+
+   ![image](assets/evaluation_context.png)
+
 ## Troubleshooting guide
 
 * Error message when you try to achieve the model you deployed in AI Foundry portal:
@@ -161,3 +185,23 @@ Provides a simple build-your-own rag with Azure AI Foundry, AI Search and Azure 
    2. Ensure that the model is available in your region. You can check the availability of the model in your region by visiting the [official documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#model-summary-table-and-region-availability).
 
    3. Try to deploy a different model that is available in your region, and update the model names in your `.env` file accordingly.
+
+* Error message when running `python evaluate.py`:
+
+   ```text
+   azure.ai.evaluation.exceptions.EvaluationError: (UserError) Failed to upload evaluation run to the cloud due to insufficient permission to access the storage. Please ensure that the necessary access rights are granted.
+   ```
+
+   If you scroll up on the error message, you will get additional information about the error, like `ErrorCode: KeyBaseAuthenticationNotPermitted` or `ErrorCode: AuthorizationFailure`. Make sure to follow the steps below to fix this.
+
+   **Troubleshooting steps**
+
+   1. Ensure the Storage Account Access Key is enabled.
+
+   ![image](assets/accesskey.png)
+
+   2. Ensure the Storage account is reachable: `Public Network Access` must be enabled at least for your IP address.
+
+   ![image](assets/network.png)
+
+   3. Ensure your user have `Storage Blob Data Contributor` access on the Storage Account. You can set that by rinning the script in step 3 of the *Getting Started* section.
