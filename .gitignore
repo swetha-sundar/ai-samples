@@ -1,2 +1,4 @@
 .env
 .aifoundryenv/
+**/__pycache__/
+eval_results.json
